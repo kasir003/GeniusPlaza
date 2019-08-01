@@ -1,15 +1,21 @@
-from django.test import TestCase
-from rest_framework.test import APIRequestFactory
-from .views import RecipeListView, RecipeView
+from rest_framework import status
+from rest_framework.test import APITestCase
+from django.urls import reverse
+
 from .models import User
 
 
 # Create your tests here.
-class RecipeTestCase(TestCase):
+class RecipeTestCase(APITestCase):
     def setUp(self):
-        User.objects.create(username="vamsi")
+        self.user = User.objects.create(username="vamsi")
+
+    def test_get_all_recipes(self):
+        response = self.client.get('/recipes/')
+        self.assertEqual(response.status_code, 200)
 
     def test_post_new_recipe(self):
+        # Arrange
         request = {
             "name": "Pasta",
             "user": 1,
@@ -24,9 +30,6 @@ class RecipeTestCase(TestCase):
                 }
             ]
         }
-        factory = APIRequestFactory()
-        view = RecipeListView.as_view()
-        request = factory.get('/recipes/')
-        response = view(request)
 
-
+        response = self.client.post('/recipes/', request, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)

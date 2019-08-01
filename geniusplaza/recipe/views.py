@@ -3,6 +3,7 @@ Genius Plaza project views
 """
 
 from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render_to_response
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics
 
@@ -38,5 +39,5 @@ def user_recipe_list(request, pk):
             recipe = Recipe.objects.get(user=pk)
             serializer = RecipeSerializer(recipe)
             return JsonResponse(serializer.data, safe=False)
-        except User.DoesNotExist:
+        except Recipe.DoesNotExist:
             return HttpResponse(status=404)
